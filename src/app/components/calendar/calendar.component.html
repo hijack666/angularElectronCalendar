@@ -1,8 +1,8 @@
 <h1>Ваш календарь</h1>
 <div class="year"><span (click)=prevYear()><-</span>{{ year }}<span (click)=nextYear()>-></span></div>
 <div class="calendar" >
-    <div class='month' *ngFor="let month of monthNames; let i = index;" [ngClass]="activeMonth === true ? 'activeMonth' : 'notActiveMonth' ">
-        {{ month }}
+    <div class='month' *ngFor="let month of monthNames; let i = index; let active of monthNames.active" [ngClass]="active.active === true ? 'activeMonth' : 'notActiveMonth' ">
+        {{ month.month }}
         <table>
             <thead>
                 <th>ПН</th>

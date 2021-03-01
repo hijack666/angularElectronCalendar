@@ -19,7 +19,7 @@ export class CalendarComponent implements OnInit {
 
     month: string; // название месяца
     monthNames = []; // массив названий месяца
-    activeMonth: boolean;
+    activeMonth = [];
 
     monthLength: number; // длина месяца
     monthLengthArray = []; // массив длин месяца
@@ -59,8 +59,8 @@ export class CalendarComponent implements OnInit {
     }
 
     async createYear(year, clear = false) {
-        await this.loadDatas(this.result);
-        console.log(this.result);
+        await this.loadDatas();
+        console.log('TYT', this.result);
         console.log(year);
         year = this.year;
         if (clear) {
@@ -71,7 +71,13 @@ export class CalendarComponent implements OnInit {
         for (let i = 0; i < this.yearLength; i++) {
             this.month = new Date(year, i).toLocaleString('ru', { month: 'long' });
             // console.log(this.month);
-            this.monthNames.push(this.month);
+            this.monthNames.push({month: this.month, active: false});
+            if (this.monthNames[i].month === this.result.month) {
+                console.log('совпадение');
+                // this.activeMonth.push(true);
+                this.monthNames[i].active = true;
+                // console.log(this.activeMonth);
+            }
 
             this.monthLength = new Date(year, i + 1, 0).getDate();
             this.monthLengthArray.push(this.monthLength);
@@ -83,22 +89,26 @@ export class CalendarComponent implements OnInit {
             // this.getSavedDate(i); // получаем данные с локал
             // this.loadDatas();
         }
+        console.log(this.monthNames);
+        // console.log(this.activeMonth);
     }
 
     // загружаем данные из json файла
-    async loadDatas(data) {
-        await this.electronService.loadData('data.json').then((res) => {
-            // this.result = res;
-            data = res;
-            // console.log(res);
-        });
-        console.log(data);
-        return data;
+    async loadDatas() {
+        // data = await this.electronService.loadData('data.json').then((res) => {
+        //     // this.result = res;
+        //     data = res;
+        //     // console.log(res);
+        // });
+        // data = await this.electronService.loadData('data.json');
+        // console.log('dasds', data);
+        this.result = await this.electronService.loadData('data.json');
+        return this.result;
     }
 
     // сохраняем данные из json файла
     saveDatas(data) {
-        data = { year: 2021, month: 3, day: 25};
+        data = { year: 2021, month: 'февраль', day: 25};
         this.electronService.saveData('data.json', data).then( (res) => {
             console.log(res, 'сохранено');
         });

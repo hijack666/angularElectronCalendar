@@ -21,11 +21,11 @@ function createWindow () {
     })
     );
     // Open the DevTools.
-    mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools();
 
     mainWindow.on('closed', function () {
-    mainWindow = null
-    })
+        mainWindow = null;
+    });
 }
 
 // ipcMain.handle('loadData', async (event, fileName) => {
@@ -62,12 +62,12 @@ ipcMain.handle('saveData', async (event, fileName, data) => {
     return 'OK';
   });
 
-app.on('ready', createWindow)
+app.on('ready', createWindow);
 
 app.on('window-all-closed', function () {
-    if (process.platform !== 'darwin') app.quit()
+    if (process.platform !== 'darwin') app.quit();
 })
 
 app.on('activate', function () {
-    if (mainWindow === null) createWindow()
+    if (mainWindow === null) createWindow();
 })
