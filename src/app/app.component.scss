@@ -1,0 +1,31 @@
+.red {
+    background: red;
+    font-weight: bold;
+    color: #fff;
+}
+
+.blue {
+    background: blue;
+    font-size: 1.5em;
+    color: #fff;
+}
+
+p {
+    font-size: 1.5em;
+    text-align: center;
+}
+
+.wrap {
+    border: 1px dashed green;
+    padding: 1rem;
+}
+
+input {
+    &.ng-invalid.ng-touched {
+        border-color: red;
+    }
+
+    &.ng-valid.ng-touched {
+        border-color: green;
+    }
+}

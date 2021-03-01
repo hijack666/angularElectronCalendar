@@ -1,0 +1,25 @@
+<h1>Ваш календарь</h1>
+<div class="year"><span (click)=prevYear()><-</span>{{ year }}<span (click)=nextYear()>-></span></div>
+<div class="calendar" >
+    <div class='month' *ngFor="let month of monthNames; let i = index;" [ngClass]="activeMonth === true ? 'activeMonth' : 'notActiveMonth' ">
+        {{ month }}
+        <table>
+            <thead>
+                <th>ПН</th>
+                <th>ВТ</th>
+                <th>СР</th>
+                <th>ЧТ</th>
+                <th>ПТ</th>
+                <th>СБ</th>
+                <th>ВС</th>
+            </thead>
+            <tbody class="month-days">
+                <td *ngFor="let empty of getArrays(emptyDays[i])"></td>
+                <!-- <td *ngFor="let day of getArrays(monthLengthArray[i])" (click)="showDate(day+1, month)" [ngClass]="{'picked': month === res.month && day === res.day}">{{day + 1}}</td> -->
+                <td *ngFor="let day of getArrays(monthLengthArray[i])" (click)="showDate(day+1, month)">{{day + 1}}</td>
+            </tbody>
+        </table>
+    </div>
+   
+</div>
+<button (click)="saveDatas(data)">Save</button>
