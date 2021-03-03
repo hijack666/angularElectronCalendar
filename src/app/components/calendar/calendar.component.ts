@@ -1,4 +1,4 @@
-import { Component, Injectable, OnInit } from '@angular/core';
+import { Component, Injectable, OnInit, ElementRef, HostListener } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ipcRenderer } from 'electron';
 import { ElectronService } from 'src/app/core/electron.service';
@@ -13,12 +13,14 @@ export class CalendarComponent implements OnInit {
 
     year = new Date().getFullYear(); // текущий, или переключенный год
     yearLength = 12;
+    today = {year: new Date().getFullYear(), month: new Date().toLocaleString('ru', { month: 'long' }), day: new Date().getDate()};
 
     chosenYear: number;
     event: string;
 
     month: string; // название месяца
-    monthNames = []; // массив названий месяца
+    // monthNames = []; // массив названий месяца
+    monthNames;
     activeMonth = [];
 
     monthLength: number; // длина месяца
@@ -34,24 +36,15 @@ export class CalendarComponent implements OnInit {
     obj = {}; // объект из 12 месяцев
 
     saved = {};
-    data = {
-        январь: [],
-        февраль: [],
-        март: [],
-        апрель: [],
-        май: [],
-        июнь: [],
-        июль: [],
-        август: [],
-        сентябрь: [],
-        октябрь: [],
-        ноябрь: [],
-        декабрь: []
-    };
+    monthActiveDays = [];
 
     result;
 
+    showHint: {};
+    showThisMonth = 0;
     constructor(private electronService: ElectronService) {
+        this.showHint = {};
+        this.showThisMonth = 0;
     }
 
     ngOnInit(): void {
@@ -70,13 +63,15 @@ export class CalendarComponent implements OnInit {
         }
         for (let i = 0; i < this.yearLength; i++) {
             this.month = new Date(year, i).toLocaleString('ru', { month: 'long' });
-            // console.log(this.month);
-            this.monthNames.push({month: this.month, active: false});
-            if (this.monthNames[i].month === this.result.month) {
-                console.log('совпадение');
-                // this.activeMonth.push(true);
-                this.monthNames[i].active = true;
-                // console.log(this.activeMonth);
+
+            this.monthActiveDays.push({activeDays: [], event: []});
+            // В месяце есть активные дни, если его массив имеет длину
+            if ( this.result[i].days.length ) {
+                this.result[i].days.filter(d => {
+                    this.monthActiveDays[i].activeDays.push(d.day);
+                    this.monthActiveDays[i].event.push(d.event);
+                }
+            );
             }
 
             this.monthLength = new Date(year, i + 1, 0).getDate();
@@ -84,24 +79,12 @@ export class CalendarComponent implements OnInit {
 
             this.emptyNumber = new Date(year, i, 0).getDay();
             this.emptyDays.push( this.emptyNumber );
-            // this.activeMonth = false;
-            // this.getSavedDate(i); // получаем данные с локал и записываем в объект
-            // this.getSavedDate(i); // получаем данные с локал
-            // this.loadDatas();
         }
-        console.log(this.monthNames);
-        // console.log(this.activeMonth);
+        console.log(this.monthActiveDays);
     }
 
     // загружаем данные из json файла
     async loadDatas() {
-        // data = await this.electronService.loadData('data.json').then((res) => {
-        //     // this.result = res;
-        //     data = res;
-        //     // console.log(res);
-        // });
-        // data = await this.electronService.loadData('data.json');
-        // console.log('dasds', data);
         this.result = await this.electronService.loadData('data.json');
         return this.result;
     }
@@ -127,20 +110,6 @@ export class CalendarComponent implements OnInit {
 
     showDate(day, month) {
         console.log(day, month);
-        // day = this.day.indexOf(day);
-        // if ( day > -1) {
-        //     this.day.slice(day, 1);
-        // } else {
-        //     this.day.push(day);
-        // }
-        // console.log(this.day, month);
-
-        var pickedData = {
-            'year': this.chosenYear,
-            'day': this.day,
-            'event': this.event
-        }
-
     }
 
     prevYear() {

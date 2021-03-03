@@ -22,3 +22,19 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 }
+
+table td {
+    position: relative;
+}
+
+table td.activeDay {
+    cursor: pointer;
+}
+
+.hint {
+    border: 1px solid black;
+    position: absolute;
+    bottom: 100%;
+    left: 100%;
+    background-color: lightblue;
+}
