@@ -20,7 +20,7 @@ import { NgxElectronModule } from 'ngx-electron';
   ],
   declarations: [
     AppComponent,
-    CalendarComponent
+    CalendarComponent,
   ],
   providers: [
   ],

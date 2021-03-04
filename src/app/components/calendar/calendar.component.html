@@ -22,7 +22,7 @@
                 <td *ngFor="let empty of getArrays(emptyDays[i]);"></td>
                 <td 
                     *ngFor="let day of getArrays(monthLengthArray[i])"
-                    (click)="showDate(day+1, month.month)"
+                    (click)="showDate(year, month, day)"
                     
                     [ngClass]="[month.month === today.month && (day+1) === today.day && year === today.year ? 'today' : '',
                         monthActiveDays[i].activeDays.includes(day + 1) && year === monthActiveDays[i].year ? 'activeDay' : '']"
@@ -31,16 +31,29 @@
                     (mouseleave)="showHint = 0"
                     >
                     {{day + 1}}
-                    <div 
+                    <!-- <div 
                         *ngIf="monthActiveDays[i].activeDays.includes(day + 1) && showHint === (day+1) && showThisMonth === month.month"
                         class="hint">
                         {{month.month}} {{ month.days[k].day }} {{ month.days[k].event}}
-                    </div>
+                    </div> -->
+                    
                 </td>
             </tbody>
         </table>
+        
     </div> 
-   
+    <div
+        class="modalDay"
+        *ngIf="addDay"
+        >
+        <div>Year: <span (click)="expression"><-</span>{{ modalDate.y }} <span>-></span></div>
+        <div style="display: inline-block;">Any <input type="checkbox"></div>
+        <!-- {{month | json}} -->
+        <div>{{ modalDate.m.month }} {{ modalDate.d }} </div>
+        <input type="text" [(ngModel)]="event">
+        <span class="close-btn" (click)="closeDayModal()">X</span>
+        <button (click)="ok()">OK</button>
+    </div>
 </div>
 <!-- Next activity remaining {{ today.day }} days -->
 <button (click)="saveDatas(data)">Save</button>

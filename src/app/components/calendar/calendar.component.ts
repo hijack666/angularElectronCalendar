@@ -29,11 +29,15 @@ export class CalendarComponent implements OnInit {
     emptyNumber: number; // с какого дня недели начинается месяц
     emptyDays = []; // массив пустых дней в начале
 
-    clicked = false; // кликнули по элементу
+    addDay = false; // кликнули по дате
 
     day = []; // куда записываем дни
+    modalDate = { y: Number, m: String, d: Number };
+
 
     obj = {}; // объект из 12 месяцев
+
+    unsavedData = [];
 
     saved = {};
     monthActiveDays = [];
@@ -90,17 +94,6 @@ export class CalendarComponent implements OnInit {
         return this.result;
     }
 
-    // сохраняем данные из json файла
-    saveDatas(data) {
-        data = { year: 2021, month: 'февраль', day: 25};
-        this.electronService.saveData('data.json', data).then( (res) => {
-            console.log(res, 'сохранено');
-        });
-        // this.electronService.saveData('data.json', data);
-    //     // this.saved["январь"].push(obj);
-    //     // console.log(this.saved);
-    //     this.fs.writeFile('data.txt', 'sdadsa');
-    }
 
     getSavedDate() {
     }
@@ -109,17 +102,39 @@ export class CalendarComponent implements OnInit {
         return [...Array(days).keys()];
     }
 
-    showDate(day, month) {
-        console.log(day, month);
+    showDate(year, month, day) {
+        // console.log(year, month, day);
+        this.addDay = true;
+        this.modalDate = { y: year, m: month.month, d: day + 1};
+    }
+    ok() {
+        this.addDay = false;
+        this.unsavedData.push({ y: this.year, m: this.modalDate.m, d: this.modalDate.d, event: this.event });
+        // console.log(this.unsavedData);
+        this.event = '';
+    }
+
+    // сохраняем данные из json файла
+    saveDatas(data) {
+        data = this.result;
+        console.log(data);
+        // this.unsevadData надо запихнуть в общую ДАТУ и сохранить
+        
+        // console.log(this.unsavedData);
+        // this.electronService.saveData('data.json', data).then( (res) => {
+        //     console.log(res, 'сохранено');
+        // });
+    }
+
+    closeDayModal() {
+        this.addDay = false;
     }
 
     prevYear() {
         this.createYear(this.year--, true);
     }
     nextYear() {
-        this.createYear(this.year++, true)
+        this.createYear(this.year++, true);
     }
-
-
 
 }

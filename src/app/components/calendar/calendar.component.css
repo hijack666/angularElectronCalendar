@@ -38,3 +38,11 @@ table td.activeDay {
     left: 100%;
     background-color: lightblue;
 }
+
+.modalDay {
+    border: 1px solid black;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: lightgray;
+}
