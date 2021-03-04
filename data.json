@@ -7,7 +7,7 @@
     {
         "month": "февраль",
         "active": false,
-        "days": []
+        "days": [{"year":"any","day":22, "event": "праздник"}]
     },
     {
         "month": "март",

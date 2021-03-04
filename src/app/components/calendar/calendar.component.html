@@ -7,7 +7,6 @@
         (mouseenter)="showThisMonth = month.month"
         >
         {{ month.month }}
-        {{ month.days | json }}
         <table>
             <thead>
                 <th>ПН</th>
@@ -26,9 +25,9 @@
                     (click)="showDate(day+1, month.month)"
                     
                     [ngClass]="[month.month === today.month && (day+1) === today.day && year === today.year ? 'today' : '',
-                        monthActiveDays[i].activeDays.includes(day + 1) ? 'activeDay' : '']"
-                    (mouseenter)="[monthActiveDays[i].activeDays.includes(day + 1) ? showHint = (day+1) : showHint = 0,
-                    k = monthActiveDays[i].activeDays.indexOf(day + 1)]"
+                        monthActiveDays[i].activeDays.includes(day + 1) && year === monthActiveDays[i].year ? 'activeDay' : '']"
+                    (mouseenter)="[monthActiveDays[i].activeDays.includes(day + 1) && (year === monthActiveDays[i].year || monthActiveDays[i].year === 'any') ? showHint = (day+1) : showHint = 0,
+                        k = monthActiveDays[i].activeDays.indexOf(day + 1)]"
                     (mouseleave)="showHint = 0"
                     >
                     {{day + 1}}
