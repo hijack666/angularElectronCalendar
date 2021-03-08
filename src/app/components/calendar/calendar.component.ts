@@ -1,5 +1,6 @@
-import { Component, Injectable, OnInit, ElementRef, HostListener } from '@angular/core';
+import { Component, Injectable, OnInit, ElementRef, HostListener, ViewChild, Renderer2, AfterViewInit } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Event } from '@angular/router';
 import { ipcRenderer } from 'electron';
 import { ElectronService } from 'src/app/core/electron.service';
 // import { ElectronService } from '../../core/electron.service;
@@ -9,7 +10,7 @@ import { ElectronService } from 'src/app/core/electron.service';
     styleUrls: ['./calendar.component.css'],
     templateUrl: './calendar.component.html',
 })
-export class CalendarComponent implements OnInit {
+export class CalendarComponent implements OnInit, AfterViewInit {
 
     year = new Date().getFullYear(); // текущий, или переключенный год
     yearLength = 12;
@@ -33,6 +34,7 @@ export class CalendarComponent implements OnInit {
 
     day = []; // куда записываем дни
     modalDate = { y: Number, m: String, d: Number };
+    clearedDay = { y: Number, m: String, d: Number };
 
 
     obj = {}; // объект из 12 месяцев
@@ -46,14 +48,33 @@ export class CalendarComponent implements OnInit {
 
     showHint: {};
     showThisMonth = 0;
-    constructor(private electronService: ElectronService) {
+
+    @ViewChild('closeModal', {static: false})
+    closeModal: ElementRef;
+    @ViewChild('dayModal', {static: false})
+    dayModal: ElementRef;
+    inputRef: ElementRef | undefined;
+
+    constructor(private electronService: ElectronService, private renderer: Renderer2) {
         this.showHint = {};
         this.showThisMonth = 0;
     }
 
+
     async ngOnInit(): Promise<void> {
         await this.loadDatas();
         this.createYear(this.year);
+
+    }
+
+    ngAfterViewInit(): void {
+        // this.renderer.listen('window', 'click', (e) => {
+        //     console.log('click');
+        //     if (e.target !== this.closeModal.nativeElement && e.target !== this.dayModal.nativeElement && this.addDay ) {
+        //         this.addDay = false;
+        //         console.log('click outside');
+        //     }
+        // });
     }
 
     createYear(year, clear = false) {
@@ -115,19 +136,44 @@ export class CalendarComponent implements OnInit {
     }
 
     // сохраняем данные из json файла
-    saveDatas(data) {
+    async saveDatas(data) {
         data = this.result;
+        // this.unsavedData надо запихнуть в общую ДАТУ и сохранить
+        for (let i = 0; i < data.length; i++) {
+            this.unsavedData.map((e) => {
+                if (e.m === data[i].month) {
+                    data[i].days.push({day: e.d, event: e.event, year: e.y});
+                }
+            });
+        }
         console.log(data);
-        // this.unsevadData надо запихнуть в общую ДАТУ и сохранить
-        
-        // console.log(this.unsavedData);
-        // this.electronService.saveData('data.json', data).then( (res) => {
-        //     console.log(res, 'сохранено');
-        // });
+        this.electronService.saveData('data.json', data).then( (res) => {
+            console.log(res, 'сохранено');
+        });
+        await this.loadDatas();
     }
 
     closeDayModal() {
         this.addDay = false;
+    }
+    clearDay(data, year, month, day) {
+        data = this.result;
+        this.clearedDay = { y: year, m: month, d: day};
+        console.log(this.clearedDay);
+        // console.log(data);
+        // data[y].days // удалить этот элемент массива, равный this.clearedDay
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].month === this.clearedDay.m) {
+                console.log(this.clearedDay.m);
+                let ind = data[i].days.map( (d) => {return d.day} ).indexOf(this.clearedDay.d);
+                // console.log(ind);
+                data[i].days.splice(ind, 1);
+            }
+        }
+        // this.unsavedData = data;
+        console.log(data);
+        // надо замутить что-то типа unsavedClearDay = []; и удалять из объекта итые части массива
+        // после сохранения this.clearedDay = {}, затем загрузить ДАТУ
     }
 
     prevYear() {

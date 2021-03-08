@@ -45,14 +45,25 @@
     <div
         class="modalDay"
         *ngIf="addDay"
+        #dayModal
         >
-        <div>Year: <span (click)="expression"><-</span>{{ modalDate.y }} <span>-></span></div>
-        <div style="display: inline-block;">Any <input type="checkbox"></div>
+        <div class="string">
+            <div class="label">Year: </div>
+            <div class="value">
+                <span (click)="expression"><-</span>{{ modalDate.y }} <span>-></span>
+            </div>
+        </div>
+        <div class="string">
+            <div class="label">Any </div>
+            <div class="value"><input type="checkbox"></div> 
+        </div>
         <!-- {{month | json}} -->
-        <div>{{ modalDate.m.month }} {{ modalDate.d }} </div>
+        <div>{{ modalDate.d }}, {{ modalDate.m }}  </div>
+        <span>Event: </span>
         <input type="text" [(ngModel)]="event">
-        <span class="close-btn" (click)="closeDayModal()">X</span>
-        <button (click)="ok()">OK</button>
+        <span class="clear-btn" (click)="clearDay(data, modalDate.y, modalDate.m, modalDate.d)">Clear</span>
+        <span class="close-btn" (click)="closeDayModal()" #closeModal>X</span>
+        <button (click)="ok()" class="btn">OK</button>
     </div>
 </div>
 <!-- Next activity remaining {{ today.day }} days -->
