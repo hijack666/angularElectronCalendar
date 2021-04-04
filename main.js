@@ -51,6 +51,12 @@ ipcMain.handle('loadData', async (event, fileName) => {
     // return data.length > 0? JSON.parse(data) : null;
 });
 
+ipcMain.handle('loadDefaultData', async (event, fileName) => {
+    fileName = 'dataDefault.json';
+    var data = fs.readFileSync(fileName); 
+    return JSON.parse(data); 
+});
+
 // ipcMain.handle('saveData', async (event, fileName, data) => {
 ipcMain.handle('saveData', async (event, fileName, data) => {
     // const userDataPath = app.getPath('userData');

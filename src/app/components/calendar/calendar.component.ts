@@ -1,7 +1,4 @@
-import { Component, Injectable, OnInit, ElementRef, HostListener, ViewChild, Renderer2, AfterViewInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Event } from '@angular/router';
-import { ipcRenderer } from 'electron';
+import { Component, OnInit, ElementRef, ViewChild, Renderer2, AfterViewInit } from '@angular/core';
 import { ElectronService } from 'src/app/core/electron.service';
 // import { ElectronService } from '../../core/electron.service;
 
@@ -32,12 +29,8 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
     addDay = false; // кликнули по дате
 
-    day = []; // куда записываем дни
     modalDate = { y: Number, m: String, d: Number };
     clearedDay = { y: Number, m: String, d: Number };
-
-
-    obj = {}; // объект из 12 месяцев
 
     unsavedData = [];
 
@@ -60,11 +53,9 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         this.showThisMonth = 0;
     }
 
-
-    async ngOnInit(): Promise<void> {
-        await this.loadDatas();
+    ngOnInit(): void {
         this.createYear(this.year);
-
+        this.loadDatas();
     }
 
     ngAfterViewInit(): void {
@@ -95,26 +86,34 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             this.emptyNumber = new Date(year, i, 0).getDay();
             this.emptyDays.push( this.emptyNumber );
         }
-        console.log(this.monthActiveDays);
     }
 
     // загружаем данные из json файла
-    async loadDatas() {
-        this.result = await this.electronService.loadData('data.json');
-        for (let i = 0; i < this.yearLength; i++) {
-            this.monthActiveDays.push({activeDays: [], event: [], year: Number || String });
-            // В месяце есть активные дни, если его массив имеет длину
-            if ( this.result[i].days.length ) {
-                this.result[i].days.filter(d => {
-                    this.monthActiveDays[i].activeDays.push(d.day);
-                    this.monthActiveDays[i].event.push(d.event);
-                    this.monthActiveDays[i].year = d.year;
-                });
+    loadDatas() {
+        this.electronService.loadData('data.json').then((res) => {
+            this.result = res;
+            for (let i = 0; i < this.yearLength; i++) {
+                this.monthActiveDays.push({activeDays: [], event: [], year: Number || String });
+                // В месяце есть активные дни, если его массив имеет длину
+                if ( this.result[i].days.length ) {
+                    this.result[i].days.filter(d => {
+                        this.monthActiveDays[i].activeDays.push(d.day);
+                        this.monthActiveDays[i].event.push(d.event);
+                        this.monthActiveDays[i].year = d.year;
+                    });
+                }
             }
-        }
-        return this.result;
+            return this.result;
+        });
     }
 
+    // очищаем данные (загружаем дефолтную дату), надо будет вывести окошко "вы уверены?"
+    loadDefaultDatas() {
+        this.electronService.loadDefaultData('dataDefault.json').then((res) => {
+            this.result = res;
+            return this.result;
+        });
+    }
 
     getSavedDate() {
     }
@@ -136,7 +135,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     }
 
     // сохраняем данные из json файла
-    async saveDatas(data) {
+    saveDatas(data) {
         data = this.result;
         // this.unsavedData надо запихнуть в общую ДАТУ и сохранить
         for (let i = 0; i < data.length; i++) {
@@ -150,7 +149,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         this.electronService.saveData('data.json', data).then( (res) => {
             console.log(res, 'сохранено');
         });
-        await this.loadDatas();
+        this.loadDatas();
     }
 
     closeDayModal() {
@@ -160,12 +159,13 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         data = this.result;
         this.clearedDay = { y: year, m: month, d: day};
         console.log(this.clearedDay);
-        // console.log(data);
         // data[y].days // удалить этот элемент массива, равный this.clearedDay
         for (let i = 0; i < data.length; i++) {
             if (data[i].month === this.clearedDay.m) {
                 console.log(this.clearedDay.m);
-                let ind = data[i].days.map( (d) => {return d.day} ).indexOf(this.clearedDay.d);
+                const ind = data[i].days.map( (d) => {
+                    return d.day;
+                }).indexOf(this.clearedDay.d);
                 // console.log(ind);
                 data[i].days.splice(ind, 1);
             }

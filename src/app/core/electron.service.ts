@@ -38,6 +38,10 @@ export class ElectronService {
     return this.ipcRenderer.invoke('loadData', jsonFileName);
   }
 
+  public loadDefaultData(jsonFileName: string): Promise<any> {
+    return this.ipcRenderer.invoke('loadDefaultData', jsonFileName);
+  }
+
   public saveData(jsonFileName: string, data: any): Promise<any> {
     return this.ipcRenderer.invoke('saveData', jsonFileName, data);
   }

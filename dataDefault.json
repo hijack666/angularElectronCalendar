@@ -1,0 +1,62 @@
+[
+    {
+        "month": "январь",
+        "active": false,
+        "days": []
+    },
+    {
+        "month": "февраль",
+        "active": false,
+        "days": []
+    },
+    {
+        "month": "март",
+        "active": false,
+        "days": []
+    },
+    {
+        "month": "апрель",
+        "active": false,
+        "days": []
+    },
+    {
+        "month": "май",
+        "active": false,
+        "days": []
+    },
+    {
+        "month": "июнь",
+        "active": false,
+        "days": []
+    },
+    {
+        "month": "июль",
+        "active": false,
+        "days": []
+    },
+    {
+        "month": "август",
+        "active": false,
+        "days": []
+    },
+    {
+        "month": "сентябрь",
+        "active": false,
+        "days": []
+    },
+    {
+        "month": "октябрь",
+        "active": false,
+        "days": []
+    },
+    {
+        "month": "ноябрь",
+        "active": false,
+        "days": []
+    },
+    {
+        "month": "декабрь",
+        "active": false,
+        "days": []
+    }
+]
